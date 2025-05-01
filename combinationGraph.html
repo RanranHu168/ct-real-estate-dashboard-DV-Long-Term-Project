@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CT Real Estate Dashboard</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+  <style>
+    body { margin: 0; font-family: sans-serif; }
+    #top { display: flex; flex-direction: row; height: 55vh; }
+    #map {
+      flex: 2;
+      position: relative;   /* Added */
+      z-index: 0;           /* Added */
+    }
+    #chart-container { flex: 1; padding: 20px; background: #f9f9f9; overflow-y: auto; }
+    #bottom { display: flex; flex-direction: row; height: 45vh; }
+    #scatter-section { flex: 1; padding: 10px; }
+    #right-placeholder { flex: 1; padding: 10px; background: #f0f0f0; }
+    .tooltip { position: absolute; background: #fff; padding: 5px; border: 1px solid #999; pointer-events: none; font-size: 14px; display: none;z-index: 9999; }
+    .dot { opacity: 0.7; }
+    svg { border: 1px solid #ccc; }
+    select { margin-right: 10px; }
+    #controls { margin: 10px; }
+    .town-label { font-size: 10px; font-weight: bold; color: #222; text-shadow: 1px 1px 1px #fff; }
+  </style>
+</head>
+<body>
+<h2 style="margin: 10px;">CT Real Estate Market Dashboard</h2>
+
+
+<!-- Control Panel -->
+<div id="controls">
+  <label for="yearSelect">Select Year:</label>
+  <select id="yearSelect"><option value="All">All</option></select>
+  <label for="townSelect">Town:</label>
+  <select id="townSelect"><option value="All">All</option></select>
+</div>
+
+<!-- Top: Map + Line Chart -->
+<div id="top">
+  <div id="map"></div>
+  <div id="chart-container">
+    <h3>Price Trend for Selected Town</h3>
+    <svg id="line-chart" width="100%" height="500"></svg>
+    <div id="lineChartTooltip" class="tooltip"></div> <!-- ✅ 改了id -->
+  </div>
+</div>
+
+<!-- Map Tooltip -->
+<div id="mapTooltip" class="tooltip"></div>
+
+<!-- Bottom: Scatter Plot -->
+<div id="bottom">
+  <div id="scatter-section">
+    <h3>Scatter Plot: Assessed vs Sale Price</h3>
+    <div id="scatter-controls">
+      <label for="typeSelect">Property Type:</label>
+      <select id="typeSelect"><option value="All">All</option></select>
+    </div>
+    <!-- ✅ 这里改成具体数值，不再是100% -->
+    <svg id="scatterPlot" width="800" height="500"></svg>
+    <div id="scatterTooltip" class="tooltip"></div> <!-- New -->
+  </div>
+  <div id="stacked-bar-section">
+    <h3>Stacked Bar Chart: Number of Sales</h3>
+    <div id="barTooltip" style="position: absolute; background: white; border: 1px solid #ccc; padding: 5px; font-size: 12px; pointer-events: none; display: none;"></div>
+    <div id=" stackedBarContainer" style="height: 800px; overflow-y: auto;">
+      <svg id ="stackedBarChart" width = "500" height = "300"></svg>
+    </div>
+  </div>
+</div>
+
+
+<!--  Script order matters: load map/line first, then scatter -->
+<script src="scatterScript.js"></script>
+<script src="stackedChart.js"></script>
+<script src="mapLineScript.js"></script>
+
+
+</body>
+</html>
